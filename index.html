@@ -1,20 +1,35 @@
 <!DOCTYPE html>
 <html>
-
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width">
-  <title>lia altspace aframe 360</title>
-  <script src="https://aframe.io/releases/0.3.0/aframe.min.js"></script> 
+  <script src="https://aframe.io/releases/0.3.0/aframe.min.js"></script>
   <script src="https://cdn.rawgit.com/AltspaceVR/aframe-altspace-component/v1.3.1/dist/aframe-altspace-component.min.js"></script>
+  <script>
+    AFRAME.registerComponent('altspace-look-at', {
+      init: function () {
+        if (!window.altspace || !altspace.inClient) { return; }
+        altspace.getThreeJSTrackingSkeleton().then(function (skeleton) {
+          this.head = skeleton.getJoint('Head')
+        }.bind(this))
+      },
+      tick: function () {
+        if (!this.head || !this.el.object3D) { return; }
+        this.el.object3D.lookAt(this.head.position); 
+      }
+    })
+  </script>
 </head>
 
 <body>
   <a-scene altspace=fullspace:true>
-  <!--model-->
-<a-assets>
-   <a-asset-item id="eyeball" src="https://rawgit.com/Lia021/eyeball/master/eyeball.dae"></a-asset-item>
- </a-assets>
- <a-entity  position="1 2 0"collada-model="#eyeball"></a-entity> 
+    <!--model-->
+    <a-assets>
+      <a-asset-item id="eyeball" src="https://rawgit.com/Lia021/eyeball/master/eyeball.dae"></a-asset-item>
+    </a-assets>
+    <a-entity position="0 4 0" altspace-look-at>
+      <a-entity position="0 -1 -1" rotation="0 -90 0" collada-model="#eyeball"></a-entity>
+    </a-entity>
 </body>
+
 </html>
